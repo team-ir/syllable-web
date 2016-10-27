@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 print "Content-type: application/json\n\n";
 use CGI::Carp qw(fatalsToBrowser warningsToBrowser);
 use CGI;
