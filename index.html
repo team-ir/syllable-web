@@ -1,0 +1,101 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllable</title>
+    <!-- Material Design fonts -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Chrome, Firefox OS, Opera and Vivaldi -->
+    <meta name="theme-color" content="#009688">
+    <!-- Windows Phone -->
+    <meta name="msapplication-navbutton-color" content="#009688">
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#009688">
+
+    <link href="Content/bootstrap.css" rel="stylesheet"/>
+	<link href="Content/bootstrap-material-design.css" rel="stylesheet"/>
+	<link href="Content/ripples.css" rel="stylesheet"/>
+	<link href="Content/site.css" rel="stylesheet"/>
+
+    <script src="Scripts/modernizr-2.8.3.js"></script>
+    
+</head>
+<body>
+	<div class="container">
+		<div class="center" style="width: 70%">
+			<h1 class="text-center">Syllable</h1>
+
+			<div class="row">
+				<div class="form-group label-static">
+					<label for="i2" class="control-label">Text</label>
+					<textarea class="form-control input" id="i2" placeholder="Text" rows="5"></textarea>
+				</div>
+			</div>
+
+			<button class="btn btn-primary btn-lg btn-block btn-raised center analyze" style="background-color: rebeccapurple;width: 70%"><span class="glyphicon glyphicon-play"></span> Analyze</button>
+
+			<div class="progress progress-striped active" style="display:none"> <div class="progress-bar" style="width: 100%"></div> </div>
+			<br />
+			<div class="text"> 
+			</div>
+			<br />
+		</div>		
+	</div>
+	
+	<script src="Scripts/jquery-2.2.3.js"></script>
+	<script src="Scripts/jquery.$$.js"></script>
+
+	<script src="Scripts/bootstrap.js"></script>
+	<script src="Scripts/material.js"></script>
+	<script src="Scripts/ripples.js"></script>
+	<script src="Scripts/jquery.jscroll.js"></script>
+	
+	<script type="text/javascript">
+        $(document).ready(function () {
+            $.material.init();
+				
+			$('.analyze').click(function () {
+                $('.progress').show();
+                $('.analyze').html('<span class="glyphicon glyphicon-refresh spinning"></span> Please wait...');
+                $('.analyze').attr("disabled", true);
+                var input = $('.input').val();
+                $.get("decoding_article.pl?text=" + input, function (data) {
+                	var table = '';
+					$.each(data, function(key,jsonObject){
+			            var thead = `<tr>
+										<th class="col-md-1">#</th>
+										<th class="col-md-11">${key} suku kata</th>
+									  </tr>`;
+
+						var tbody = '';
+					    $.each(jsonObject, function(index,val){
+					        tbody += `<tr>
+										<td>${index+1}</td>
+										<td>${val}</td>
+									  </tr>`;
+					    });
+			
+						table += `<table class="table table-striped table-hover table-bordered">
+							  <thead>
+							  	${thead}
+							  </thead>
+							  <tbody>
+							  	${tbody}
+							  </tbody>
+							</table>`;
+					});
+					$('.text').html(table);
+
+                    $('.progress').hide();
+                    $('.analyze').html('<span class="glyphicon glyphicon-play"></span> Analyze');
+                    $('.analyze').attr("disabled", false);
+
+                    $('html, body').animate({
+                        scrollTop: $(".text").offset().top
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+<html>
