@@ -35,23 +35,28 @@ $text =~ s/[[:punct:]]/ /g; #remove punctuation
 $text =~ s/\s+/ /gi; #remove multiple spaces
 
 my @splitKorpus = split(' ', $text);
+my %hashKata;
 
-foreach my $word (@splitKorpus) {    
-	## FSA tingkat 1
-	my $res = fsa_uno($word);
+foreach my $word (@splitKorpus) {
+	if (not exists $hashKata{$word}){
+		$hashKata{$word} = 1;
+			
+		## FSA tingkat 1
+		my $res = fsa_uno($word);
 
-	## FSA tingkat 2
-	$res = fsa_dos($res);
+		## FSA tingkat 2
+		$res = fsa_dos($res);
 
-	## FSA tingkat 3
-	$res = fsa_tres($res);		
+		## FSA tingkat 3
+		$res = fsa_tres($res);		
+			
+		my @tmp = split /-/, $res;
+		my $numOfSyllable = scalar(@tmp);
+		my $syllable = lc decode($word, $res, \%decode_K);
+		#~ say lc "$word : " . $syllable . " : $numOfSyllable";
 		
-	my @tmp = split /-/, $res;
-	my $numOfSyllable = scalar(@tmp);
-	my $syllable = lc decode($word, $res, \%decode_K);
-	#~ say lc "$word : " . $syllable . " : $numOfSyllable";
-	
-	push(@{$count{$numOfSyllable}}, lc $word);
+		push(@{$count{$numOfSyllable}}, lc $word);
+	}    
 }
 
 print JSON->new->pretty->encode(\ %count);	
